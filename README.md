@@ -83,9 +83,11 @@ Root Directory를 `frontend`로 두면, 루트의 `frontend/vercel.json`(SPA용 
 
 | Name | 설명 |
 |------|------|
-| `VITE_API_URL` | FastAPI 서버의 origin (예: `https://xxx.railway.app`). **끝에 `/` 없이** 등록. |
+| `VITE_API_URL` | FastAPI 서버의 origin (예: `https://xxx.railway.app`). **끝에 `/` 없이** 등록. **Production·Preview 모두**에서 검색이 되게 하려면 각 환경에 넣거나 “All Environments”로 등록. |
 
 로컬 개발에서는 `VITE_API_URL`을 비우고 Vite 프록시(`/api` → `localhost:8000`)를 씁니다.
+
+**배포 후 검색 시 `POST …/api/search 405 (Method Not Allowed)`** 가 나오면, 브라우저가 **Vercel 정적 사이트**로 API 요청을 보내고 있다는 뜻입니다. `VITE_API_URL`을 백엔드 주소로 넣은 뒤 **반드시 재배포**(환경 변수는 빌드 시 번들에 들어감)하세요.
 
 ### 백엔드 배포
 
