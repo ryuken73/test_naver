@@ -1,8 +1,11 @@
 import path from 'path'
+import { fileURLToPath } from 'url'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
-// Tailwind v4: PostCSS(`@tailwindcss/postcss`) 사용 — @tailwindcss/vite 플러그인 미사용
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
