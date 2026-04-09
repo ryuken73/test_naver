@@ -1,0 +1,17 @@
+# API 키·비밀값 — 커밋 금지 (.env.example 만 예외적으로 저장소에 둠)
+.env
+.env.local
+*.pem
+*.key
+
+*.pyc
+__pycache__/
+.venv/
+venv/
+node_modules/
+dist/
+*.log
+.DS_Store
+
+# Cursor IDE (로컬 계획 등)
+.cursor/

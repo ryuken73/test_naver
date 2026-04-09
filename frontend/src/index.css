@@ -1,0 +1,22 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
+  --color-border: hsl(240 6% 90%);
+  --color-background: hsl(0 0% 99%);
+  --color-foreground: hsl(240 10% 10%);
+  --color-muted: hsl(240 5% 45%);
+  --color-accent: hsl(262 83% 58%);
+  --color-accent-foreground: hsl(0 0% 100%);
+  --radius-lg: 0.75rem;
+}
+
+@layer base {
+  body {
+    @apply m-0 min-h-svh bg-[var(--color-background)] text-[var(--color-foreground)] antialiased;
+    font-family: var(--font-sans);
+  }
+  #root {
+    @apply mx-auto min-h-svh w-full max-w-6xl px-4 py-6 text-left;
+  }
+}
