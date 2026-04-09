@@ -49,7 +49,7 @@ npm install
 npm run dev
 ```
 
-기본적으로 Vite는 `vite.config.ts`의 설정에 따라 **포트 80**에서 뜨도록 되어 있을 수 있습니다. Windows에서는 80번 포트에 **관리자 권한**이 필요할 수 있습니다. 개발 시 `vite.config.ts`의 `server.port`를 `5173` 등으로 바꿀 수 있습니다.
+로컬 개발 서버는 기본 **포트 5173**입니다 (`vite.config.ts`의 `server.port`).
 
 프록시: `/api` → `http://127.0.0.1:8000`
 
@@ -60,6 +60,40 @@ PowerShell에서 프로젝트 루트:
 ```powershell
 .\restart.ps1
 ```
+
+## Vercel 배포 (Git 저장소 Import)
+
+이 저장소는 **모노레포** 구조입니다(`frontend/`, `backend/`). Vercel 대시보드에서 **[Add New] → Project → GitHub/GitLab 저장소 Import**로 연동하는 경우 아래를 맞추면 됩니다.
+
+### 프로젝트 설정
+
+| 항목 | 권장 값 |
+|------|---------|
+| **Root Directory** | `frontend` |
+| Framework Preset | Vite (자동 감지되면 그대로) |
+| Build Command | `npm run build` (기본값) |
+| Output Directory | `dist` (기본값) |
+| Install Command | `npm install` (기본값) |
+
+Root Directory를 `frontend`로 두면, 루트의 `frontend/vercel.json`(SPA용 rewrite)이 적용됩니다. 저장소 루트만 연결하고 Root를 비우면 `package.json`이 없어 빌드가 실패할 수 있습니다.
+
+### 환경 변수 (Vercel → Settings → Environment Variables)
+
+프론트는 **정적 호스팅**이라 Python 백엔드가 같은 프로젝트에 없습니다. API를 다른 곳(Railway, Render, 자체 서버 등)에 둔 경우 **백엔드 URL**만 프론트에 넘깁니다.
+
+| Name | 설명 |
+|------|------|
+| `VITE_API_URL` | FastAPI 서버의 origin (예: `https://xxx.railway.app`). **끝에 `/` 없이** 등록. |
+
+로컬 개발에서는 `VITE_API_URL`을 비우고 Vite 프록시(`/api` → `localhost:8000`)를 씁니다.
+
+### 백엔드 배포
+
+이 README는 프론트(Vercel) 위주입니다. FastAPI는 별도 호스팅에 두고, CORS에 `https://<your-vercel-app>.vercel.app` 등을 추가해야 합니다.
+
+### 빌드 안정화 (참고)
+
+Tailwind CSS v4는 **`@tailwindcss/postcss`** + `postcss.config.js`로 처리합니다(`@tailwindcss/vite` 플러그인 미사용). Vercel/Git 연동 빌드에서 발생하던 일부 환경 오류를 줄이기 위한 구성입니다.
 
 ## API
 

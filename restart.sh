@@ -23,9 +23,9 @@ kill_port() {
   fi
 }
 
-echo "Stopping ports 8000, 80..."
+echo "Stopping ports 8000, 5173..."
 kill_port 8000
-kill_port 80
+kill_port 5173
 sleep 0.5
 
 VENV="$ROOT/.venv"
@@ -41,7 +41,7 @@ echo "Starting backend (8000)..."
 ) &
 BACK_PID=$!
 
-echo "Starting frontend (80)..."
+echo "Starting frontend (5173)..."
 (
   cd "$ROOT/frontend"
   exec npm run dev
@@ -49,5 +49,5 @@ echo "Starting frontend (80)..."
 FRONT_PID=$!
 
 echo "Backend PID: $BACK_PID, Frontend PID: $FRONT_PID"
-echo "URLs: http://127.0.0.1:8000  |  http://localhost/"
+echo "URLs: http://127.0.0.1:8000  |  http://localhost:5173/"
 echo "종료: kill $BACK_PID $FRONT_PID"

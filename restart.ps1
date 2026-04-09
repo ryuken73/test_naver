@@ -1,4 +1,4 @@
-# 프로젝트 루트에서 백엔드(8000)·프론트(80) 재기동
+# 프로젝트 루트에서 백엔드(8000)·프론트(5173) 재기동
 $ErrorActionPreference = "SilentlyContinue"
 $Root = $PSScriptRoot
 Set-Location $Root
@@ -12,9 +12,9 @@ function Stop-Port {
         }
 }
 
-Write-Host "Stopping listeners on ports 8000, 80..."
+Write-Host "Stopping listeners on ports 8000, 5173..."
 Stop-Port 8000
-Stop-Port 80
+Stop-Port 5173
 Start-Sleep -Milliseconds 500
 
 $VenvPython = Join-Path $Root ".venv\Scripts\python.exe"
@@ -34,7 +34,7 @@ Start-Process powershell -WorkingDirectory $BackendDir -ArgumentList @(
     "& '$Uvicorn' main:app --host 127.0.0.1 --port 8000 --reload"
 )
 
-Write-Host "Starting frontend: http://localhost/ (port 80)"
+Write-Host "Starting frontend: http://localhost:5173/"
 Start-Process powershell -WorkingDirectory $FrontendDir -ArgumentList @(
     "-NoExit",
     "-Command",
