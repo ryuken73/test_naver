@@ -95,6 +95,14 @@ Root Directory를 `frontend`로 두면, 루트의 `frontend/vercel.json`(SPA용 
 
 Tailwind CSS v4는 **`@tailwindcss/postcss`** + `postcss.config.js`로 처리합니다(`@tailwindcss/vite` 플러그인 미사용). Vercel/Git 연동 빌드에서 발생하던 일부 환경 오류를 줄이기 위한 구성입니다.
 
+**`Cannot read properties of undefined (reading 'fsPath')`가 Vercel 빌드 로그에만 뜰 때**
+
+1. Vercel 프로젝트 **Settings → Environment Variables**에서 **`VERCEL_CLI_VERSION`** 이 있으면 **삭제**하세요. (구버전 CLI가 최신 빌드 파이프라인과 맞지 않아 동일 메시지가 나는 사례가 있습니다.)
+2. **Root Directory**가 반드시 **`frontend`** 인지 확인하세요.
+3. **Settings → General → Node.js Version**을 **20.x** (또는 `frontend/.nvmrc`와 동일)로 맞추세요.
+
+프로젝트에서는 Tailwind/PostCSS 관련 패키지를 **`dependencies`**에 두어, 설치 단계에서 누락되지 않도록 했습니다.
+
 ## API
 
 | 메서드 | 경로 | 설명 |
