@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import Any
 from urllib.parse import urlparse
 
-from journalist_insights import build_journalist_insights
+from backend.journalist_insights import build_journalist_insights
 
 # --- Kiwi (형태소) ---
 try:

@@ -32,14 +32,15 @@ NAVER_CLIENT_SECRET=발급받은_시크릿
 
 ### 2. 백엔드
 
-프로젝트 루트에서 가상환경을 만든 뒤, `backend` 폴더에서 서버를 띄웁니다.
+프로젝트 **루트**에서 가상환경을 만든 뒤, 패키지 `backend`를 uvicorn으로 띄웁니다.
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\pip install -r backend\requirements.txt
-cd backend
-..\.venv\Scripts\uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+.\.venv\Scripts\pip install -r requirements.txt
+.\.venv\Scripts\uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
 ```
+
+(`requirements.txt`는 루트에 있으며 `backend/requirements.txt`를 끌어옵니다.)
 
 ### 3. 프론트엔드
 
@@ -63,35 +64,34 @@ PowerShell에서 프로젝트 루트:
 
 ## Vercel 배포 (Git 저장소 Import)
 
-이 저장소는 **모노레포** 구조입니다(`frontend/`, `backend/`). Vercel 대시보드에서 **[Add New] → Project → GitHub/GitLab 저장소 Import**로 연동하는 경우 아래를 맞추면 됩니다.
+**프론트(Vite 정적) + FastAPI**를 한 프로젝트에서 배포합니다. 루트의 `vercel.json`·`pyproject.toml`이 빌드·Python 런타임을 정의합니다 ([FastAPI on Vercel](https://vercel.com/docs/frameworks/backend/fastapi)).
 
-### 프로젝트 설정
+### 프로젝트 설정 (대시보드)
 
 | 항목 | 권장 값 |
 |------|---------|
-| **Root Directory** | `frontend` |
-| Framework Preset | Vite (자동 감지되면 그대로) |
-| Build Command | `npm run build` (기본값) |
-| Output Directory | `dist` (기본값) |
-| Install Command | `npm install` (기본값) |
+| **Root Directory** | **`.`** (저장소 루트, 비우거나 `./`) |
+| Framework Preset | **Vite** 또는 **Other** (자동 감지되면 그대로) |
+| Build / Output / Install | 저장소 루트 `vercel.json`이 우선 (`frontend` 빌드 + `pip install`) |
+| Node.js Version | **20.x** (`frontend/.nvmrc`와 맞춤) |
 
-Root Directory를 `frontend`로 두면, 루트의 `frontend/vercel.json`(SPA용 rewrite)이 적용됩니다. 저장소 루트만 연결하고 Root를 비우면 `package.json`이 없어 빌드가 실패할 수 있습니다.
+**Root Directory를 `frontend`만 두면** Python 백엔드가 배포에 포함되지 않습니다. 반드시 **루트**를 프로젝트 루트로 두세요.
 
 ### 환경 변수 (Vercel → Settings → Environment Variables)
 
-프론트는 **정적 호스팅**이라 Python 백엔드가 같은 프로젝트에 없습니다. API를 다른 곳(Railway, Render, 자체 서버 등)에 둔 경우 **백엔드 URL**만 프론트에 넘깁니다.
-
 | Name | 설명 |
 |------|------|
-| `VITE_API_URL` | FastAPI 서버의 origin (예: `https://xxx.railway.app`). **끝에 `/` 없이** 등록. **Production·Preview 모두**에서 검색이 되게 하려면 각 환경에 넣거나 “All Environments”로 등록. |
+| `NAVER_CLIENT_ID` | 네이버 검색 API Client ID (**백엔드**에서 사용, Production 등 필요한 환경에 등록) |
+| `NAVER_CLIENT_SECRET` | 네이버 검색 API Client Secret |
+| `VITE_API_URL` | (선택) 비우면 **같은 배포 도메인**으로 `/api` 호출. API를 **별도 서버**에만 둘 때만 백엔드 origin을 넣고 재빌드 |
 
-로컬 개발에서는 `VITE_API_URL`을 비우고 Vite 프록시(`/api` → `localhost:8000`)를 씁니다.
+로컬에서는 `VITE_API_URL`을 비우고 Vite 프록시(`/api` → `localhost:8000`)를 씁니다.
 
-**배포 후 검색 시 `POST …/api/search 405 (Method Not Allowed)`** 가 나오면, 브라우저가 **Vercel 정적 사이트**로 API 요청을 보내고 있다는 뜻입니다. `VITE_API_URL`을 백엔드 주소로 넣은 뒤 **반드시 재배포**(환경 변수는 빌드 시 번들에 들어감)하세요.
+**이전에 `POST …/api/search 405`** 가 났던 경우는, Root가 `frontend`만 잡혀 정적 사이트에 API 요청이 간 경우입니다. 루트 배포 + 위 환경 변수로 해결됩니다.
 
-### 백엔드 배포
+### 백엔드(CORS)
 
-이 README는 프론트(Vercel) 위주입니다. FastAPI는 별도 호스팅에 두고, CORS에 `https://<your-vercel-app>.vercel.app` 등을 추가해야 합니다.
+`backend/main.py`에 `*.vercel.app` 출처가 허용되어 있습니다. 별도 도메인만 쓸 때는 해당 origin을 추가하세요.
 
 ### 빌드 안정화 (참고)
 
@@ -100,7 +100,7 @@ Tailwind CSS v4는 **`@tailwindcss/postcss`** + `postcss.config.js`로 처리합
 **`Cannot read properties of undefined (reading 'fsPath')`가 Vercel 빌드 로그에만 뜰 때**
 
 1. Vercel 프로젝트 **Settings → Environment Variables**에서 **`VERCEL_CLI_VERSION`** 이 있으면 **삭제**하세요. (구버전 CLI가 최신 빌드 파이프라인과 맞지 않아 동일 메시지가 나는 사례가 있습니다.)
-2. **Root Directory**가 반드시 **`frontend`** 인지 확인하세요.
+2. **Root Directory**가 **저장소 루트(`.`)** 인지 확인하세요. FastAPI를 같이 쓰려면 `frontend`만 지정하면 안 됩니다.
 3. **Settings → General → Node.js Version**을 **20.x** (또는 `frontend/.nvmrc`와 동일)로 맞추세요.
 
 프로젝트에서는 Tailwind/PostCSS 관련 패키지를 **`dependencies`**에 두어, 설치 단계에서 누락되지 않도록 했습니다.
@@ -118,14 +118,17 @@ Tailwind CSS v4는 **`@tailwindcss/postcss`** + `postcss.config.js`로 처리합
 
 ```
 test_naver/
+├── vercel.json              # Vercel: 프론트 빌드 + SPA rewrite (/api 제외)
+├── pyproject.toml           # Vercel: FastAPI 앱 엔트리 (backend.main:app)
+├── requirements.txt         # pip: -r backend/requirements.txt
 ├── backend/
 │   ├── main.py              # FastAPI, 네이버 연동
-│   ├── analyzer.py          # 지표·요약
+│   ├── analyzer.py
 │   ├── journalist_insights.py
 │   └── requirements.txt
 ├── frontend/
 │   └── src/
-│       ├── components/      # SearchBox, NewsList, 대시보드 등
+│       ├── components/
 │       └── ...
 ├── restart.ps1
 └── restart.sh

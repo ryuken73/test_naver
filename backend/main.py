@@ -14,8 +14,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from analyzer import analyze_items, clean_text, press_from_link, summarize_article
-from journalist_insights import title_jaccard_between_corpora
+from backend.analyzer import analyze_items, clean_text, press_from_link, summarize_article
+from backend.journalist_insights import title_jaccard_between_corpora
 
 _BACKEND_DIR = Path(__file__).resolve().parent
 _PROJECT_ROOT = _BACKEND_DIR.parent
@@ -133,4 +133,5 @@ async def search(body: SearchBody) -> dict[str, Any]:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    # 프로젝트 루트에서: python -m backend.main
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)

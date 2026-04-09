@@ -24,14 +24,13 @@ if (-not (Test-Path $Uvicorn)) {
     exit 1
 }
 
-$BackendDir = Join-Path $Root "backend"
 $FrontendDir = Join-Path $Root "frontend"
 
 Write-Host "Starting backend: http://127.0.0.1:8000 (reload)"
-Start-Process powershell -WorkingDirectory $BackendDir -ArgumentList @(
+Start-Process powershell -WorkingDirectory $Root -ArgumentList @(
     "-NoExit",
     "-Command",
-    "& '$Uvicorn' main:app --host 127.0.0.1 --port 8000 --reload"
+    "& '$Uvicorn' backend.main:app --host 127.0.0.1 --port 8000 --reload"
 )
 
 Write-Host "Starting frontend: http://localhost:5173/"

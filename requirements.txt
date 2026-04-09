@@ -1,0 +1,2 @@
+# Vercel / pip: backend 의존성 (루트에서 pip install -r requirements.txt)
+-r backend/requirements.txt

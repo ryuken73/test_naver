@@ -36,8 +36,8 @@ fi
 
 echo "Starting backend (8000)..."
 (
-  cd "$ROOT/backend"
-  exec "$VENV/bin/uvicorn" main:app --host 127.0.0.1 --port 8000 --reload
+  cd "$ROOT"
+  exec "$VENV/bin/uvicorn" backend.main:app --host 127.0.0.1 --port 8000 --reload
 ) &
 BACK_PID=$!
 
