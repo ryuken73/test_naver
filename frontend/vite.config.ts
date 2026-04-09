@@ -1,17 +1,13 @@
 import path from 'path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-import { fileURLToPath } from 'url'
 
-const dir = path.dirname(fileURLToPath(import.meta.url))
-
-// Tailwind v4: PostCSS(`@tailwindcss/postcss`) 사용 — Vercel/Git 빌드에서 @tailwindcss/vite 관련 이슈 회피
+// Tailwind v4: PostCSS(`@tailwindcss/postcss`) 사용 — @tailwindcss/vite 플러그인 미사용
 export default defineConfig({
-  root: dir,
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(dir, './src'),
+      '@': path.resolve(__dirname, './src'),
     },
   },
   server: {
