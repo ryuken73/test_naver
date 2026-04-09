@@ -5,7 +5,11 @@
   "installCommand": "npm install --prefix frontend && python -m pip install --break-system-packages -r requirements.txt",
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]

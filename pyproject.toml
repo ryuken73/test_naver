@@ -4,10 +4,6 @@ version = "0.1.0"
 requires-python = ">=3.12"
 readme = "README.md"
 
-# Vercel FastAPI: https://vercel.com/docs/frameworks/backend/fastapi
-[project.scripts]
-app = "backend.main:app"
-
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
